@@ -2,13 +2,6 @@
 open System.IO
 open System.Collections.Generic
 
-// the following might come in handy: 
-//File.ReadAllLines(path)
-// returns an array of strings for each line 
- 
-//let path = let lines = File.ReadAllLines @"C:\Users\Tobias\Documents\Repos\Dojo-Digits-Recognizer\Dojo\"
-
-
 let validationFile = @"C:\Users\Tobias\Documents\Repos\Dojo-Digits-Recognizer\Dojo\validationsample.csv"
 let trainingFile = @"C:\Users\Tobias\Documents\Repos\Dojo-Digits-Recognizer\Dojo\trainingsample.csv"
 
@@ -17,16 +10,12 @@ type Digit = { Label:int; Pixels:int[] }
 let getData fileWithPath = 
     let lines = File.ReadAllLines fileWithPath
     let stringFieldsWithHeaders = lines |> Array.map (fun x -> x.Split(',')) 
- 
     let stringFields = stringFieldsWithHeaders.[1 .. ]
-
     let intFields = stringFields |> Array.map (fun x -> x |> Array.map Convert.ToInt32 )
- 
     let recordfields = intFields |> Array.map (fun x -> {
                                                             Label = x.[0]
                                                             Pixels = x.[1..]
-                                                        }
-                                              )
+                                                        } )
     recordfields
 
 let recordFields = getData trainingFile
@@ -71,10 +60,10 @@ let test votes = votes |> Array.map (fun (x, y) -> if x = y then 1 else 0) |> Ar
 //
 //let percent = float(good) / float(testFields.Length)
 
-let votingTest = testFields |> classifyRecords 3 
+let votingTest = testFields |> classifyRecords 10
                             |> Array.map (fun (lgss, l) -> lgss |> voting 
                                                                 |> Seq.maxBy (fun kvp -> kvp.Value)
-                                                                |> fun kvp -> (kvp.Key, kvp.Value))
+                                                                |> fun kvp -> (kvp.Key, l))
 
 let voteingPercent = float(test votingTest) / float(testFields.Length)
 
